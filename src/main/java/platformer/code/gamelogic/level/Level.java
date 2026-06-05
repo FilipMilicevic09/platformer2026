@@ -35,9 +35,11 @@ public class Level {
 
 	private ArrayList<Enemy> enemiesList = new ArrayList<>();
 	private ArrayList<Flower> flowers = new ArrayList<>();
+	private ArrayList<Water> waters = new ArrayList<>();
 
 	private List<PlayerDieListener> dieListeners = new ArrayList<>();
 	private List<PlayerWinListener> winListeners = new ArrayList<>();
+	
 
 	private Mapdata mapdata;
 	private int width;
@@ -198,23 +200,30 @@ public class Level {
 	//#############################################################################################################
 	//Your code goes here! 
 	//Please make sure you read the rubric/directions carefully and implement the solution recursively!
-//pre condition:col and row need to be actual positions on the map, map and tilset must already exist, and fulness must have a value from 0-3
-//post condition: 
+//pre condition:col and row need to be actual positions on the map, map and tilset must already exist, and fulness must have a value from 0-3 so the correct water image can be chosen
+//post condition: A water tile is added at the given location and if it is possible the water will spread down left or right depending on nearby solid tiles and water fullness. 
 
 	private void water(int col, int row, Map map, int fullness) {
 		Water w = new Water(col, row, tileSize, tileset.getImage("Full_water"), this, fullness);
         Water n = new Water(col, row, tileSize, tileset.getImage("Half_water"), this, fullness);
         Water t = new Water(col, row, tileSize, tileset.getImage("Quarter_water"), this, fullness);
         Water r = new Water(col, row, tileSize, tileset.getImage("Falling_water"), this, fullness);
-        if(fullness == 3)
+        if(fullness == 3){
         map.addTile(col, row, w);
-        if(fullness == 2)
+		waters.add(w);
+		}
+        if(fullness == 2){
         map.addTile(col, row, n);
-        if(fullness == 1)
+		waters.add(w);
+}
+        if(fullness == 1){
         map.addTile(col, row, t);
-        if(fullness == 0)
+		waters.add(w);
+}
+        if(fullness == 0){
         map.addTile(col, row, r);
-
+		waters.add(w);
+		}
         if(row+1 < map.getTiles()[0].length && !(map.getTiles()[col][row+1].isSolid()) && !(map.getTiles()[col+1][row] instanceof Water)){
             if(row +2 < map.getTiles()[0].length && map.getTiles()[col][row+2].isSolid() && !(map.getTiles()[col+1][row] instanceof Water))
             {
@@ -248,6 +257,7 @@ public class Level {
             }
         }
     }
+
 
 
 
