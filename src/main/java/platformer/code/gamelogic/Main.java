@@ -85,7 +85,7 @@ public class Main extends GameBase implements PlayerDieListener, PlayerWinListen
 		active = true;
 	}
 
-	//-----------------------------------------------Player Listener
+	
 	@Override
 	public void onPlayerDeath() {
 		numberOfTries++;

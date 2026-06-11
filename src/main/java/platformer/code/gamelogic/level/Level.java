@@ -36,6 +36,7 @@ public class Level {
 	private ArrayList<Enemy> enemiesList = new ArrayList<>();
 	private ArrayList<Flower> flowers = new ArrayList<>();
 	private ArrayList<Water> waters = new ArrayList<>();
+	private List<Gas> gasBlocks = new ArrayList<>();
 
 	private List<PlayerDieListener> dieListeners = new ArrayList<>();
 	private List<PlayerWinListener> winListeners = new ArrayList<>();
@@ -173,8 +174,8 @@ public class Level {
 				if (flowers.get(i).getHitbox().isIntersecting(player.getHitbox())) {
 					if(flowers.get(i).getType() == 1)
 						water(flowers.get(i).getCol(), flowers.get(i).getRow(), map, 3);
-//					else
-//						addGas(flowers.get(i).getCol(), flowers.get(i).getRow(), map, 20, new ArrayList<Gas>());
+			else
+						addGas(flowers.get(i).getCol(), flowers.get(i).getRow(), map, 20, new ArrayList<Gas>());
 					flowers.remove(i);
 					i--;
 				}
@@ -332,4 +333,74 @@ public class Level {
 	public Player getPlayer() {
 		return player;
 	}
+
+	// GAS PHYSICS CODE **************************************************
+	//Pre cond: The given row and column are valid and the map needs to exist
+	// Post cond:Gas is added to the open tiles surrounding/near the starting spot
+	private void addGas(int col, int row, Map map, int numSquaresToFill, ArrayList<Gas> placedThisRound) {
+
+    Tile[][] tiles = map.getTiles();
+
+    int placed = 0;
+
+    
+    if (!(tiles[col][row] instanceof Gas) && !tiles[col][row].isSolid()) {
+        Gas start = new Gas(col, row, tileSize, tileset.getImage("GasOne"), this, 0);
+    
+
+        map.addTile(col, row, start);
+        gasBlocks.add(start);
+        placedThisRound.add(start);
+        placed++;
+    }
+
+    int[][] directions = {
+            {0, -1},
+            {1, -1},
+            {-1, -1},
+            {1, 0},
+            {-1, 0},
+            {1, 1},
+            {0, 1},
+            {-1, 1}
+    };
+
+    int currentIndex = 0;
+
+    while (placed < numSquaresToFill && currentIndex < placedThisRound.size()) {
+
+        Gas current = placedThisRound.get(currentIndex);
+
+        int currentCol = current.getCol();
+        int currentRow = current.getRow();
+
+        for (int i = 0; i < directions.length && placed < numSquaresToFill; i++) {
+
+            int newCol = currentCol + directions[i][0];
+            int newRow = currentRow + directions[i][1];
+
+
+            if (newCol < 0 || newCol >= tiles.length)
+                continue;
+
+            if (newRow < 0 || newRow >= tiles[0].length)
+                continue;
+
+            Tile target = tiles[newCol][newRow];
+
+            if (target.isSolid() || target instanceof Gas)
+                continue;
+
+            Gas g = new Gas(newCol, newRow, tileSize, tileset.getImage("GasOne"), this, 0);
+
+            map.addTile(newCol, newRow, g);
+            gasBlocks.add(g);
+            placedThisRound.add(g);
+            placed++;
+        }
+
+        currentIndex++;
+    }
+}
+
 }
