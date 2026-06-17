@@ -12,6 +12,7 @@ import platformer.code.gamelogic.tiles.Tile;
 
 public class Player extends PhysicsObject{
 	public float walkSpeed = 400;
+
 	public float jumpPower = 1350;
 
 	private boolean isJumping = false;

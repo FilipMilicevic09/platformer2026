@@ -6,6 +6,7 @@ import java.util.List;
 
 import platformer.code.gameengine.PhysicsObject;
 import platformer.code.gameengine.graphics.Camera;
+import platformer.code.gameengine.hitbox.RectHitbox;
 import platformer.code.gameengine.loaders.Mapdata;
 import platformer.code.gameengine.loaders.Tileset;
 import platformer.code.gamelogic.GameResources;
