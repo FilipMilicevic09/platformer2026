@@ -23,7 +23,7 @@ import platformer.code.gamelogic.tiles.Tile;
 import platformer.code.gamelogic.tiles.Water;
 
 public class Level {
-
+	private boolean inGas = false;
 	private LevelData leveldata;
 	private Map map;
 	private Enemy[] enemies;
@@ -64,8 +64,14 @@ public class Level {
 	}
 
 	public void restartLevel() {
-		int[][] values = mapdata.getValues();
-		Tile[][] tiles = new Tile[width][height];
+		
+		gasBlocks.clear();
+    waters.clear();
+    flowers.clear();
+    enemiesList.clear();
+
+    int[][] values = mapdata.getValues();
+    Tile[][] tiles = new Tile[width][height];
 
 		for (int x = 0; x < width; x++) {
 			int xPosition = x;
@@ -155,10 +161,27 @@ public class Level {
 	}
 
 	public void update(float tslf) {
+		 
 		if (active) {
-			// Update the player
+	// Update the player
 			player.update(tslf);
+	// Slows down the player down when touching water
+	player.walkSpeed = 400;
 
+	for (Water water : waters) {
+   		 if (water.getHitbox().isIntersecting(player.getHitbox())) {
+    	    player.walkSpeed = 200;
+      	  break;
+    }
+}
+inGas = false;
+
+for (Gas gas : gasBlocks) {
+    if (gas.getHitbox().isIntersecting(player.getHitbox())) {
+        inGas = true;
+        break;
+    }
+}
 			// Player death
 			if (map.getFullHeight() + 100 < player.getY())
 				onPlayerDeath();
@@ -288,7 +311,15 @@ public class Level {
 		// used for debugging
 		if (Camera.SHOW_CAMERA)
 			camera.draw(g);
-
+if (inGas) {
+    g.setColor(new java.awt.Color(0, 0, 0, 180));
+    g.fillRect(
+        (int) camera.getX(),
+        (int) camera.getY(),
+        Main.SCREEN_WIDTH,
+        Main.SCREEN_HEIGHT
+    );
+}
 		g.translate((int) +camera.getX(), (int) +camera.getY());
 	}
 
